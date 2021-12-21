@@ -1,0 +1,17 @@
+﻿{
+  "name": "OrceiPDF App",
+  "short_name": "OrceiPDF",
+  "start_url": "../",
+  "icons": [
+    {
+      "src": "images/orcei-logo-512-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "images/orcei-logo-192-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ]
+}

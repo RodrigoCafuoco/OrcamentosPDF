@@ -1,0 +1,192 @@
+﻿@model ClienteViewModel
+
+@{
+    ViewData["Title"] = "Meus Clientes";
+}
+
+<div class="row">
+    <div class="col-md-4 col-sm-12 my-auto d-flex justify-content-center mb-4">
+        <div class="d-flex align-items-center my-auto">
+            <img class="img-fluid mb-5" src="~/images/undraw_conference_call_b0w6.svg" width="300" />
+        </div>
+    </div>
+    <div class="col-md-8 col-sm-12">
+        <div class="d-flex">
+            @if (Model.Id == Guid.Empty)
+            {
+                <h3>Registrar Cliente</h3>
+            }
+            else
+            {
+                <h3>Editar Cliente</h3>
+                <a href="/cliente" class="btn btn-primary d-inline ml-auto"><i class="fa fa-plus"></i> Novo</a>
+            }
+        </div>
+        <hr />
+        <form method="post" id="form-crud" class="p-2">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="UserId" />
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label class="font-weight-bold" asp-for="NomeFantasia"></label><span class="text-danger">*</span>
+                <input asp-for="NomeFantasia" class="form-control" />
+                <span asp-validation-for="NomeFantasia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="font-weight-bold" asp-for="RazaoSocial"></label><span class="text-danger">*</span>
+                <input asp-for="RazaoSocial" class="form-control" />
+                <span asp-validation-for="RazaoSocial" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="font-weight-bold" asp-for="Email"></label><span class="text-danger">*</span>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="font-weight-bold" asp-for="Endereco"></label><span class="text-danger">*</span>
+                <input asp-for="Endereco" class="form-control" />
+                <span asp-validation-for="Endereco" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="font-weight-bold" asp-for="Telefone"></label>
+                <input asp-for="Telefone" class="form-control" />
+                <span asp-validation-for="Telefone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="font-weight-bold" asp-for="Celular"></label><span class="text-danger">*</span>
+                <input asp-for="Celular" class="form-control" />
+                <span asp-validation-for="Celular" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="font-weight-bold" asp-for="Cnpj"></label><span class="text-danger">*</span>
+                <input asp-for="Cnpj" class="form-control" />
+                <span asp-validation-for="Cnpj" class="text-danger"></span>
+            </div>
+            @if (ViewBag.HasEmpresa)
+            {
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Salvar</button>
+            }
+            else
+            {
+                <button type="button" class="btn disabled btn-primary"><i class="fas fa-save"></i> Salvar</button>
+                <div class="alert alert-warning py-2 mt-2" role="alert">
+                    *** Configure sua <a href="/empresa" class="alert-link">empresa</a> antes de cadastrar um produto.
+                </div>
+            }
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="card card-custom gutter-b w-100 mt-4">
+        <div class="card-header flex-wrap pt-4">
+            <h5 class="card-title">
+                Clientes
+            </h5>
+        </div>
+        <div class="card-body">
+            <!--begin: Datatable-->
+            <div id="kt_datatable_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-bordered table-checkable dataTable no-footer dtr-inline" id="tbDados" role="grid" aria-describedby="kt_datatable_info">
+                            <thead>
+                                <tr role="row">
+                                    <th class="sorting_disabled" aria-label="Editar">Editar</th>
+                                    <th class="sorting_disabled" tabindex="0" aria-controls="kt_datatable" data-db="NomeFantasia">Nome</th>
+                                    <th class="sorting_disabled" tabindex="0" aria-controls="kt_datatable" data-db="RazaoSocial">Razão Social</th>
+                                    <th class="sorting_disabled" tabindex="0" aria-controls="kt_datatable" data-db="Email">E-mail</th>
+                                    <th class="sorting_disabled" tabindex="0" aria-controls="kt_datatable" data-db="Celular">Celular</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!--end: Datatable-->
+        </div>
+    </div>
+</div>
+
+@await Component.InvokeAsync("ModalCrud")
+
+<script>
+    $(document).ready(function () {
+
+        $('#Telefone').mask('(00) 0000-0000');
+        $('#Celular').mask('(00) 00000-0000');
+        $('#Cnpj').mask('00.000.000/0000-00');
+
+        $.validator.addMethod("telefone", function (value, element) {
+            if (value)
+                return /\d{4,5}\-\d{4}/i.test(value);
+            else
+                return true;
+        }, "Informe um numero válido");
+
+        $("#form-crud").validate({
+            rules: {
+                NomeFantasia: {
+                    required: true
+                },
+                RazaoSocial: {
+                    required: true
+                },
+                Endereco: {
+                    required: true
+                },
+                Email: {
+                    required: true
+                },
+                Telefone: {
+                    required: false,
+                    telefone: true
+                },
+                Celular: {
+                    required: true,
+                    telefone: true
+                },
+                Cnpj: {
+                    required: true,
+                    cnpjBR: true
+                }
+            }
+        });
+
+        var tableElement = null;
+
+        function loadGrid() {
+            if (tableElement != null)
+                tableElement.ajax.reload();
+        }
+
+        tableElement = $('#tbDados');
+
+        tableElement = tableElement.on('processing.dt', function (e, settings, processing) {
+        }).DataTable({
+            ajax: {
+                "url": "@Url.Content("~/")" + "Cliente/GetGrid",
+                "type": "POST",
+                "data": function (d) {
+                    return $.extend({}, d, {
+                        "sSortColumnName": $($($('#tbDados').find("th")[d.iSortCol_0])[0]).data("db")
+                    });
+                }
+            },
+            columnDefs: [
+                {
+                    'sortable': false,
+                    'targets': [0]
+                },
+                {
+                    "targets": [0],
+                    "render": function (data, type, full) {
+                        return "<a href='?id=" + data + "' class='edit-click mx-3' data-id='" + data + "'><i class='fa fa-edit'></i></a>";
+                    }
+                }
+            ],
+            sorting: [[1, "desc"]],
+            drawCallback: function (oSettings) {
+            }
+        });
+    });
+</script>
