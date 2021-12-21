@@ -1,2 +1,2 @@
-# OrceiPdf
-TCC - Projeto para geração de Orçamento em PDF 
+# Orcamentos em PDF
+Projeto para geração de Orçamento em PDF 
